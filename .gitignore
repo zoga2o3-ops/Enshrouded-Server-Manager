@@ -1,0 +1,10 @@
+node_modules/
+data/
+dist/
+release/
+
+# Game artwork and binaries: not for a public repo (Keen Games owns the art; the DLL is built from the mod's source)
+renderer/assets/splash.webp
+livemap-bundle/livemap/
+livemap-bundle/iphlpapi.dll
+screenshots/3-live-map.png

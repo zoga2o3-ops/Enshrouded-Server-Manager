@@ -1,0 +1,47 @@
+{
+  "name": "enshrouded-server-manager",
+  "version": "0.9.2",
+  "description": "Desktop client for managing Enshrouded dedicated servers (SteamCMD, start/stop, config, logs, backups)",
+  "main": "electron/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/server-manager.test.js test/schedule.test.js test/a2s.test.js test/players.test.js test/system.test.js test/livemap.test.js test/password.test.js",
+    "dist": "electron-builder --win portable"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
+  },
+  "devDependencies": {
+    "electron": "^37.2.3",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.enshrouded.servermanager",
+    "productName": "Enshrouded Server Manager",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "signAndEditExecutable": false,
+      "icon": "build/icon.ico"
+    },
+    "portable": {
+      "artifactName": "EnshroudedServerManager-${version}-portable.exe"
+    },
+    "extraResources": [
+      {
+        "from": "livemap-bundle",
+        "to": "livemap-bundle"
+      }
+    ]
+  }
+}
