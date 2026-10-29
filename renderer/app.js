@@ -835,7 +835,6 @@ function paintSettings(body) {
           <div class="field"><label class="label">Query port</label><input class="input" type="number" name="queryPort" min="1024" max="65535" value="${esc(cfg.queryPort)}"></div>
           <div class="field"><label class="label">Slots</label><input class="input" type="number" name="slotCount" min="1" max="64" value="${esc(cfg.slotCount)}"></div>
           <div class="field"><label class="label">Bind IP</label><input class="input" name="ip" value="${esc(cfg.ip)}"></div>
-          <div class="field"><label class="label">Tags (comma separated)</label><input class="input" name="tags" value="${esc((cfg.tags || []).join(', '))}"></div>
           <div class="field"><label class="label">Save directory</label><input class="input" name="saveDirectory" value="${esc(cfg.saveDirectory)}"></div>
           <div class="field"><label class="label">Log directory</label><input class="input" name="logDirectory" value="${esc(cfg.logDirectory)}"></div>
         </div>
@@ -932,8 +931,6 @@ function readSettingsForm(root) {
     const key = el.name;
     if (el.type === 'checkbox') {
       cfg[key] = el.checked;
-    } else if (key === 'tags') {
-      cfg.tags = el.value.split(',').map((t) => t.trim()).filter(Boolean);
     } else if (el.type === 'number') {
       cfg[key] = Number(el.value);
     } else {
