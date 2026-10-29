@@ -808,9 +808,19 @@ async function settingsTab(body, server) {
 }
 
 // Draws the settings from state.settingsDraft. Used for fresh loads and for changes made on screen.
+// Server tags the game accepts. Keep in step with SERVER_TAGS in electron/server-manager.js.
+const SERVER_TAG_GROUPS = [
+  ['Language', ['English', 'German', 'French', 'Italian', 'Japanese', 'Korean', 'Polish', 'Portuguese', 'Russian',
+    'Spanish', 'Thai', 'Turkish', 'Ukrainian', 'Chinese', 'Taiwanese']],
+  ['Playstyle', ['BaseBuilding', 'Exploration', 'Roleplay']],
+  ['Availability', ['LookingForPlayers']],
+];
+const SERVER_TAG_LIST = SERVER_TAG_GROUPS.flatMap(([, tags]) => tags);
+
 function paintSettings(body) {
   const { running, exists, serverId } = state.settingsMeta;
   const cfg = state.settingsDraft;
+  const unknownTags = (cfg.tags || []).filter((t) => !SERVER_TAG_LIST.includes(t));
   const adv = state.settingsAdvanced;
   body.innerHTML = `
     <div class="save-bar">
@@ -842,6 +852,14 @@ function paintSettings(body) {
           <label class="check"><input type="checkbox" name="enableVoiceChat" ${cfg.enableVoiceChat ? 'checked' : ''}> Voice chat</label>
           <label class="check"><input type="checkbox" name="enableTextChat" ${cfg.enableTextChat ? 'checked' : ''}> Text chat</label>
         </div>
+        <h3 style="margin:1.1rem 0 0.4rem">Server tags</h3>
+        <p class="small subtle" style="margin:0 0 0.6rem">Tags shown in the server browser. Only the game's own tags work; the game rejects anything else.</p>
+        ${unknownTags.length ? `<p class="small" style="color:var(--yellow);font-weight:700;margin:0 0 0.6rem">Not on the game's list, removed when you save: ${esc(unknownTags.join(', '))}</p>` : ''}
+        ${SERVER_TAG_GROUPS.map(([title, tags]) => `
+          <div class="small subtle" style="margin:0.5rem 0 0.2rem">${title}</div>
+          <div class="row wrap" style="gap:0.9rem">
+            ${tags.map((t) => `<label class="check"><input type="checkbox" data-tag="${t}" ${(cfg.tags || []).includes(t) ? 'checked' : ''}> ${t}</label>`).join('')}
+          </div>`).join('')}
       </div>
       ${gameSettingsPanel(effectiveGameSettings(cfg))}`}
     </div>`;
@@ -937,6 +955,9 @@ function readSettingsForm(root) {
       cfg[key] = el.value;
     }
   });
+  if (root.querySelector('[data-tag]')) {
+    cfg.tags = [...root.querySelectorAll('[data-tag]:checked')].map((el) => el.dataset.tag);
+  }
   root.querySelectorAll('[data-gs][data-dirty]').forEach((el) => {
     const key = el.dataset.gs;
     if (el.dataset.kind === 'bool') cfg.gameSettings[key] = el.checked;

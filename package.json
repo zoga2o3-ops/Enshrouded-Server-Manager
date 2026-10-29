@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "test": "node --test test/server-manager.test.js test/schedule.test.js test/a2s.test.js test/players.test.js test/system.test.js test/livemap.test.js test/password.test.js",
+    "test": "node --test test/server-manager.test.js test/schedule.test.js test/a2s.test.js test/players.test.js test/system.test.js test/livemap.test.js test/password.test.js test/tags.test.js",
     "dist": "electron-builder --win portable"
   },
   "dependencies": {

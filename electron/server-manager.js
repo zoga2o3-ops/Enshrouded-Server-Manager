@@ -90,6 +90,14 @@ function defaultConfig(name, queryPort = DEFAULT_QUERY_PORT) {
   };
 }
 
+// Server tags the game accepts (from hosting guides; the game rejects anything else).
+const SERVER_TAGS = [
+  'English', 'German', 'French', 'Italian', 'Japanese', 'Korean', 'Polish', 'Portuguese', 'Russian',
+  'Spanish', 'Thai', 'Turkish', 'Ukrainian', 'Chinese', 'Taiwanese',
+  'BaseBuilding', 'Exploration', 'Roleplay',
+  'LookingForPlayers',
+];
+
 function validateConfig(cfg) {
   if (!cfg || typeof cfg !== 'object' || Array.isArray(cfg)) throw new ApiError(400, 'Config must be an object');
   const problems = [];
@@ -100,6 +108,10 @@ function validateConfig(cfg) {
     if (!Array.isArray(cfg[key])) problems.push(`${key} must be a list`);
   }
   if (!cfg.gameSettings || typeof cfg.gameSettings !== 'object') problems.push('gameSettings must be an object');
+  if (Array.isArray(cfg.tags)) {
+    const unknown = cfg.tags.filter((t) => !SERVER_TAGS.includes(t));
+    if (unknown.length) problems.push(`tags not on the game's list: ${unknown.join(', ')}`);
+  }
   if (problems.length) throw new ApiError(400, problems.join('; '));
   return cfg;
 }
@@ -1287,6 +1299,7 @@ module.exports = {
   ALERT_EVENTS,
   defaultConfig,
   validateConfig,
+  SERVER_TAGS,
   ApiError,
   FACTOR_FIELDS,
   SERVER_EXE,
